@@ -15,13 +15,25 @@ public class SecurityConfig {
 
         // 경로에 대한 접근 권한 설정. 동작 순서는 상단부터 동작되기 때문에 순서에 유의하여 적어야 함.
         // ex) 상단에서 모든 경로에 대해 permitAll하면 밑에서 접근제한건게 동작하지 않음.
+        // 시큐리티는 버전별로 구현 방식이 달라짐 -> 스프링부트 3.1.x 버전부터는 내부에 필수적으로 람다형식으로 지정해야만 동작한다.
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login").permitAll() // 모든 사용자가 로그인을 하지 않아도 접근 가능
-                        .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 롤이 있어야 경로에 접근 가능
-                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER") // 여러 롤 설정 가능
-                        .anyRequest().authenticated() // 위엥서 처리못한 나머지 경로는 로그인만 진행하면 모두 접근 가능. denyAll하면 모든 사용자가 접근 불가능하도록
+                                .requestMatchers("/", "/login").permitAll() // 모든 사용자가 로그인을 하지 않아도 접근 가능
+                                .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 롤이 있어야 경로에 접근 가능
+                                .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER") // 여러 롤 설정 가능
+                                .anyRequest().authenticated()
+                        // 위엥서 처리못한 나머지 경로는 로그인만 진행하면 모두 접근 가능. denyAll하면 모든 사용자가 접근 불가능하도록
                 );
+
+        http
+                .formLogin((auth) -> auth.loginPage("/login") // 로그인 페이지 경로 설정
+                        .loginProcessingUrl("/loginProc") // 로그인 경로를 특정 경로("/loginProc")로 보냄
+                        .permitAll() // 아무나 들어올 수 있음
+                );
+
+        // 기본적으로 csrf 설정이 자동으로 설정되어있는데, post 요청을 보낼때 csrf 토큰도 보내야 함. 그래서 개발환경에서는 disable 시킨다.
+        http
+                .csrf((auth) -> auth.disable());
 
         return http.build();
     }
