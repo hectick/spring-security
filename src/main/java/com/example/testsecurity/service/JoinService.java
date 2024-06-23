@@ -23,7 +23,7 @@ public class JoinService {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(joinDTO.getUsername());
         userEntity.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
-        userEntity.setRole("ROLE_USER"); //접두사_ 필요
+        userEntity.setRole("ROLE_ADMIN"); //접두사_ 필요
         userRepository.save(userEntity);
     }
 }
