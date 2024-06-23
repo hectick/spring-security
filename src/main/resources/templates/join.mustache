@@ -10,6 +10,8 @@
     <form action="/joinProc" method="post" name="joinForm">
         <input type="text" name="username" placeholder="Username"/>
         <input type="password" name="password" placeholder="Password"/>
+        <!--mustache 기준 csrf 토큰-->
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
         <input type="submit" value="Join"/>
     </form>
 </body>

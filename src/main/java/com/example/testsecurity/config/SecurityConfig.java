@@ -38,8 +38,8 @@ public class SecurityConfig {
                 );
 
         // 기본적으로 csrf 설정이 자동으로 설정되어있는데, post 요청을 보낼때 csrf 토큰도 보내야 함. 그래서 개발환경에서는 disable 시킨다.
-        http
-                .csrf((auth) -> auth.disable());
+/*        http
+                .csrf((auth) -> auth.disable());*/
 
         http
                 .sessionManagement((auth) -> auth
