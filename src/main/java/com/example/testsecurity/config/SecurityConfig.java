@@ -24,7 +24,7 @@ public class SecurityConfig {
         // 시큐리티는 버전별로 구현 방식이 달라짐 -> 스프링부트 3.1.x 버전부터는 내부에 필수적으로 람다형식으로 지정해야만 동작한다.
         http
                 .authorizeHttpRequests((auth) -> auth
-                                .requestMatchers("/", "/login").permitAll() // 모든 사용자가 로그인을 하지 않아도 접근 가능
+                                .requestMatchers("/", "/login", "/loginProc", "/join", "/joinProc").permitAll() // 모든 사용자가 로그인을 하지 않아도 접근 가능
                                 .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 롤이 있어야 경로에 접근 가능
                                 .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER") // 여러 롤 설정 가능
                                 .anyRequest().authenticated()
