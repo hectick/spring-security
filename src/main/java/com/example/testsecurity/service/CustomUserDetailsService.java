@@ -17,6 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        System.out.println("username = " + username);
         final UserEntity userEntity = userRepository.findByUsername(username);
         if(userEntity != null) {
             return new CustomUserDetails(userEntity);
