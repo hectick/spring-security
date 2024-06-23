@@ -41,6 +41,15 @@ public class SecurityConfig {
         http
                 .csrf((auth) -> auth.disable());
 
+        http
+                .sessionManagement((auth) -> auth
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true)); //위의 다중로그인 값을 초과했을 경우 기존에 로그인되어있는 놈을 로그아웃시킬지, 새로 로그인하는 넘을 막을지. true -> 새로운 로그인 차단, false -> 기존 로그인 하나 삭제
+
+        // 세션 고정 보호
+        http
+                .sessionManagement((auth) -> auth
+                        .sessionFixation().changeSessionId());
         return http.build();
     }
 }
