@@ -2,6 +2,8 @@ package com.example.testsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,11 +31,11 @@ public class SecurityConfig {
         // 시큐리티는 버전별로 구현 방식이 달라짐 -> 스프링부트 3.1.x 버전부터는 내부에 필수적으로 람다형식으로 지정해야만 동작한다.
         http
                 .authorizeHttpRequests((auth) -> auth
-                                .requestMatchers("/", "/login", "/loginProc", "/join", "/joinProc").permitAll() // 모든 사용자가 로그인을 하지 않아도 접근 가능
-                                .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 롤이 있어야 경로에 접근 가능
-                                .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER") // 여러 롤 설정 가능
-                                .anyRequest().authenticated()
-                        // 위엥서 처리못한 나머지 경로는 로그인만 진행하면 모두 접근 가능. denyAll하면 모든 사용자가 접근 불가능하도록
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/").hasAnyRole("A") //  A < B < C 일 때 A, B, C
+                        .requestMatchers("/manager").hasAnyRole("B") // B, C
+                        .requestMatchers("/admin").hasAnyRole("C") // C
+                        .anyRequest().authenticated()
                 );
 
         http
@@ -61,21 +63,33 @@ public class SecurityConfig {
     }
 
     //내부에 유저를 등록해두고 인메모리로 관리
-/*    @Bean
+    @Bean
     public UserDetailsService userDetailsService() {
 
         UserDetails user1 = User.builder()
                 .username("user1")
                 .password(bCryptPasswordEncoder().encode("1234"))
-                .roles("ADMIN")
+                .roles("A")
                 .build();
 
         UserDetails user2 = User.builder()
                 .username("user2")
                 .password(bCryptPasswordEncoder().encode("1234"))
-                .roles("USER")
+                .roles("C")
                 .build();
 
         return new InMemoryUserDetailsManager(user1, user2);
-    }*/
+    }
+
+    //계층 권한 메소드 등
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+
+        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+
+        hierarchy.setHierarchy("ROLE_C > ROLE_B\n" +
+                "ROLE_B > ROLE_A");
+
+        return hierarchy;
+    }
 }
