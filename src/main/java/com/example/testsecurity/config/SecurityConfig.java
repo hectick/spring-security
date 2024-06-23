@@ -2,6 +2,7 @@ package com.example.testsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -36,10 +37,12 @@ public class SecurityConfig {
                 );
 
         http
-                .formLogin((auth) -> auth.loginPage("/login") // 로그인 페이지 경로 설정
+                .httpBasic(Customizer.withDefaults());
+
+/*                .formLogin((auth) -> auth.loginPage("/login") // 로그인 페이지 경로 설정
                         .loginProcessingUrl("/loginProc") // 로그인 경로를 특정 경로("/loginProc")로 보냄
                         .permitAll() // 아무나 들어올 수 있음
-                );
+                );*/
 
         // 기본적으로 csrf 설정이 자동으로 설정되어있는데, post 요청을 보낼때 csrf 토큰도 보내야 함. 그래서 개발환경에서는 disable 시킨다.
 /*        http
@@ -58,7 +61,7 @@ public class SecurityConfig {
     }
 
     //내부에 유저를 등록해두고 인메모리로 관리
-    @Bean
+/*    @Bean
     public UserDetailsService userDetailsService() {
 
         UserDetails user1 = User.builder()
@@ -74,5 +77,5 @@ public class SecurityConfig {
                 .build();
 
         return new InMemoryUserDetailsManager(user1, user2);
-    }
+    }*/
 }
